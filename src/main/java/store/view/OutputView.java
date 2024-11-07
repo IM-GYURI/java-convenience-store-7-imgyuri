@@ -3,50 +3,47 @@ package store.view;
 import java.text.DecimalFormat;
 import java.util.List;
 import store.domain.Product;
+import store.domain.Products;
 
 public class OutputView {
 
-    private static final String HELLO_STATEMENT = "안녕하세요. W편의점입니다.";
-    private static final String CURRENT_PRODUCTS_STATEMENT = "현재 보유하고 있는 상품입니다.";
-    private static final String NUMBER_FORMAT = "#,###";
-    private static final String PRODUCT_FORMAT = "- %s %s원 ";
-    private static final String QUANTITY_FORMAT = "%s개 ";
-    private static final String OUT_OF_STOCK = "재고 없음";
-    private static final String BLANK = "";
-    private static final String NEW_LINE = System.lineSeparator();
-
     public void printHello() {
-        System.out.println(HELLO_STATEMENT);
+        System.out.println(Statement.HELLO_STATEMENT.message);
     }
 
-    public void printCurrentProducts(List<Product> products) {
-        System.out.println(CURRENT_PRODUCTS_STATEMENT + NEW_LINE);
-        printEachProduct(products);
+    public void printCurrentProducts(Products products) {
+        System.out.println(Statement.CURRENT_PRODUCTS_STATEMENT.message + Statement.NEW_LINE.message);
+        printEachProduct(products.getProducts());
+    }
+
+    public static void printErrorMessage(String errorMessage) {
+        System.out.println(errorMessage);
     }
 
     private void printEachProduct(List<Product> products) {
         products.stream()
                 .map(this::formatProduct)
                 .forEach(System.out::println);
+        System.out.println(Statement.NEW_LINE.message);
     }
 
     private String formatProduct(Product product) {
-        return String.format(PRODUCT_FORMAT, product.getName(), formatNumber(product.getPrice()))
+        return String.format(Statement.PRODUCT_FORMAT.message, product.getName(), formatNumber(product.getPrice()))
                 + formatQuantity(product)
                 + formatPromotion(product);
     }
 
     private String formatNumber(int number) {
-        DecimalFormat decimalFormat = new DecimalFormat(NUMBER_FORMAT);
+        DecimalFormat decimalFormat = new DecimalFormat(Statement.NUMBER_FORMAT.message);
         return decimalFormat.format(number);
     }
 
     private String formatQuantity(Product product) {
         if (product.getQuantity() > 0) {
-            return String.format(QUANTITY_FORMAT, formatNumber(product.getQuantity()));
+            return String.format(Statement.QUANTITY_FORMAT.message, formatNumber(product.getQuantity()));
         }
 
-        return OUT_OF_STOCK;
+        return Statement.OUT_OF_STOCK.message;
     }
 
     private String formatPromotion(Product product) {
@@ -54,6 +51,6 @@ public class OutputView {
             return product.getPromotion().getName();
         }
 
-        return BLANK;
+        return Statement.BLANK.message;
     }
 }
