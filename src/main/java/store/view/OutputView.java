@@ -24,7 +24,7 @@ public class OutputView {
         products.stream()
                 .map(this::formatProduct)
                 .forEach(System.out::println);
-        System.out.println(Statement.NEW_LINE.message);
+        System.out.println();
     }
 
     private String formatProduct(Product product) {
