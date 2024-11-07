@@ -1,7 +1,6 @@
 package store.service;
 
-import java.util.List;
-import store.domain.Product;
+import store.domain.Products;
 import store.util.ProductLoader;
 
 public class StoreService {
@@ -12,7 +11,7 @@ public class StoreService {
         this.productLoader = productLoader;
     }
 
-    public List<Product> loadProductsFromFile(String productFilePath) {
+    public Products loadProductsFromFile(String productFilePath) {
         return productLoader.loadProducts(productFilePath);
     }
 }
