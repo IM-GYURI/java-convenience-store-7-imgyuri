@@ -1,6 +1,8 @@
 package store.controller;
 
+import java.util.List;
 import store.domain.Products;
+import store.domain.PurchaseItem;
 import store.service.StoreService;
 import store.view.View;
 
@@ -21,6 +23,6 @@ public class StoreController {
         Products products = storeService.loadProductsFromFile(PRODUCT_FILE_PATH);
         view.printCurrentProducts(products);
 
-        String productSelect = view.requestProductSelect();
+        List<PurchaseItem> purchaseItems = storeService.parsePurchaseItems(view.requestProductSelect(), products);
     }
 }
