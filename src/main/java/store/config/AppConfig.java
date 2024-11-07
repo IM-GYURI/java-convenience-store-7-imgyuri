@@ -4,20 +4,18 @@ import store.controller.StoreController;
 import store.service.StoreService;
 import store.util.ProductLoader;
 import store.util.PromotionLoader;
+import store.view.InputView;
 import store.view.OutputView;
+import store.view.View;
 
-public class AppConfig {
+public enum AppConfig {
+
+    INSTANCE;
 
     private static final String PROMOTION_FILE_PATH = "src/main/resources/promotions.md";
 
-    private static final AppConfig appConfig = new AppConfig();
-
-    public static AppConfig getInstance() {
-        return appConfig;
-    }
-
     public StoreController storeController() {
-        return new StoreController(outputView(), storeService());
+        return new StoreController(view(), storeService());
     }
 
     private StoreService storeService() {
@@ -31,6 +29,14 @@ public class AppConfig {
 
     private PromotionLoader promotionLoader() {
         return new PromotionLoader();
+    }
+
+    private View view() {
+        return new View(inputView(), outputView());
+    }
+
+    private InputView inputView() {
+        return new InputView();
     }
 
     private OutputView outputView() {
