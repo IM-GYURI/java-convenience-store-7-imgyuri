@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import store.domain.Product;
+import store.domain.Products;
 import store.domain.Promotion;
 
 public class ProductLoader {
@@ -22,7 +23,7 @@ public class ProductLoader {
         this.products = new ArrayList<>();
     }
 
-    public List<Product> loadProducts(String filePath) {
+    public Products loadProducts(String filePath) {
         Optional<Product> lastProduct = Optional.empty();
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
@@ -34,7 +35,7 @@ public class ProductLoader {
             throw new RuntimeException(e);
         }
 
-        return products.stream().toList();
+        return new Products(products.stream().toList());
     }
 
     private Product processLine(String line, Product lastProduct) {
