@@ -18,12 +18,16 @@ public class StoreController {
     }
 
     public void buyProducts() {
-        printStartStatements();
+        printStartStatement();
         List<Product> products = storeService.loadProductsFromFile(PRODUCT_FILE_PATH);
+        printCurrentProducts(products);
     }
 
-    private void printStartStatements() {
+    private void printStartStatement() {
         outputView.printHello();
-        outputView.printCurrentProducts();
+    }
+
+    private void printCurrentProducts(List<Product> products) {
+        outputView.printCurrentProducts(products);
     }
 }
