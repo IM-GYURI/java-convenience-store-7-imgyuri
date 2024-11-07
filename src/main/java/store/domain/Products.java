@@ -14,5 +14,8 @@ public class Products {
         return products;
     }
 
-    // 재고 관리 기능
+    public boolean existsProduct(String productName) {
+        return products.stream()
+                .anyMatch(product -> product.getName().equals(productName));
+    }
 }
