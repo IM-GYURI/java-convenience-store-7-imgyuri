@@ -4,6 +4,7 @@ import store.controller.StoreController;
 import store.service.StoreService;
 import store.util.ProductLoader;
 import store.util.PromotionLoader;
+import store.util.PurchaseItemParser;
 import store.view.InputView;
 import store.view.OutputView;
 import store.view.View;
@@ -19,7 +20,7 @@ public enum AppConfig {
     }
 
     private StoreService storeService() {
-        return new StoreService(productLoader());
+        return new StoreService(productLoader(), purchaseItemParser());
     }
 
     private ProductLoader productLoader() {
@@ -29,6 +30,10 @@ public enum AppConfig {
 
     private PromotionLoader promotionLoader() {
         return new PromotionLoader();
+    }
+
+    private PurchaseItemParser purchaseItemParser() {
+        return new PurchaseItemParser();
     }
 
     private View view() {
