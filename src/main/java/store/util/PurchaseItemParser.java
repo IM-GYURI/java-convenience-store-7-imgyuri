@@ -13,6 +13,12 @@ public class PurchaseItemParser {
 
     private static final String ITEM_SPLITTER = ",";
     private static final String DETAIL_SPLITTER = "-";
+    private static final String LEFT_BRACKET = "[";
+    private static final String RIGHT_BRACKET = "]";
+    private static final String REPLACE_BLANK = "";
+    private static final int QUANTITY_STANDARD = 1;
+    private static final int NAME_INDEX = 0;
+    private static final int QUANTITY_INDEX = 1;
     private static final String PURCHASE_ITEM_REGEX = "^\\[[^\\[]+?-\\d+]\\s*(,\\s*\\[[^\\[]+?-\\d+])*$";
 
     private final List<PurchaseItem> purchaseItems;
@@ -24,6 +30,8 @@ public class PurchaseItemParser {
     }
 
     public List<PurchaseItem> parsePurchaseItems(String inputStatement, Products products) {
+        clearStoredItems();
+
         validateInput(inputStatement);
 
         String[] purchaseParts = inputStatement.split(ITEM_SPLITTER);
@@ -32,11 +40,16 @@ public class PurchaseItemParser {
         return purchaseItems;
     }
 
+    private void clearStoredItems() {
+        purchaseItems.clear();
+        itemNames.clear();
+    }
+
     private void processPurchaseParts(String[] purchaseParts, Products products) {
         for (String part : purchaseParts) {
             String[] itemDetails = part.split(DETAIL_SPLITTER);
-            String name = parseEachInput(itemDetails[0]);
-            int quantity = validateQuantity(parseEachInput(itemDetails[1]));
+            String name = parseEachInput(itemDetails[NAME_INDEX]);
+            int quantity = validateQuantity(parseEachInput(itemDetails[QUANTITY_INDEX]));
 
             validateItemName(name, products);
             itemNames.add(name);
@@ -46,7 +59,7 @@ public class PurchaseItemParser {
     }
 
     private String parseEachInput(String namePart) {
-        return namePart.replace("[", "").replace("]", "").trim();
+        return namePart.replace(LEFT_BRACKET, REPLACE_BLANK).replace(RIGHT_BRACKET, REPLACE_BLANK).trim();
     }
 
     private void validateInput(String inputStatement) {
@@ -65,7 +78,7 @@ public class PurchaseItemParser {
     private int validateQuantity(String quantityInput) {
         return ValidatorBuilder.from(quantityInput)
                 .validateIsInteger()
-                .validateInteger(value -> value <= 0, ErrorMessage.INVALID_QUANTITY)
+                .validateInteger(value -> value < QUANTITY_STANDARD, ErrorMessage.INVALID_QUANTITY)
                 .getNumericValue();
     }
 }
