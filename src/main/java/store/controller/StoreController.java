@@ -1,5 +1,7 @@
 package store.controller;
 
+import static store.exception.ExceptionHandler.getValidInput;
+
 import java.util.List;
 import store.domain.Products;
 import store.domain.PurchaseItem;
@@ -23,6 +25,11 @@ public class StoreController {
         Products products = storeService.loadProductsFromFile(PRODUCT_FILE_PATH);
         view.printCurrentProducts(products);
 
-        List<PurchaseItem> purchaseItems = storeService.parsePurchaseItems(view.requestProductSelect(), products);
+        List<PurchaseItem> purchaseItems = parsePurchaseItemsFromInput(products);
+    }
+
+    private List<PurchaseItem> parsePurchaseItemsFromInput(Products products) {
+        return getValidInput(() ->
+                storeService.parsePurchaseItems(view.requestProductSelect(), products));
     }
 }
