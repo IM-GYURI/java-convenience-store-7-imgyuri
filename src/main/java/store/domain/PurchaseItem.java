@@ -2,7 +2,7 @@ package store.domain;
 
 public class PurchaseItem {
 
-    private Product product;
+    private final Product product;
     private int quantity;
 
     public PurchaseItem(Product product, int quantity) {
@@ -11,20 +11,20 @@ public class PurchaseItem {
     }
 
     public boolean needsAdditionalPurchase() {
-        Promotion promotion = product.getPromotion();
+        Promotion promotion = product.promotion();
 
         if (promotion != null && promotion.isWithinPromotionPeriod()) {
             int additionalPurchase = promotion.calculateAdditionalPurchase(quantity);
 
             return additionalPurchase > 0
-                    && quantity + additionalPurchase <= product.getStock().getPromotionStock();
+                    && quantity + additionalPurchase <= product.stock().getPromotionStock();
         }
 
         return false;
     }
 
     public void buyMore() {
-        this.quantity += product.getPromotion().calculateAdditionalPurchase(quantity);
+        this.quantity += product.promotion().calculateAdditionalPurchase(quantity);
     }
 
     public Product getProduct() {

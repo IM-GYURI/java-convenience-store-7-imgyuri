@@ -15,7 +15,7 @@ public class PurchaseItemFactory {
 
     private static Product findMatchProduct(String name, Products products) {
         return products.products().stream()
-                .filter(product -> product.getName().equals(name))
+                .filter(product -> product.name().equals(name))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(ErrorMessage.PRODUCT_NOT_EXISTS.name()));
     }

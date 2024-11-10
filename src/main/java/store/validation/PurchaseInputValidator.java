@@ -34,13 +34,13 @@ public class PurchaseInputValidator {
 
     private static Product findMatchProduct(String name, Products products) {
         return products.products().stream()
-                .filter(product -> product.getName().equals(name))
+                .filter(product -> product.name().equals(name))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(ErrorMessage.PRODUCT_NOT_EXISTS.name()));
     }
 
     private static void validateStock(Product product, int quantity) {
-        int fullStock = product.getStock().getFullStock();
+        int fullStock = product.stock().getFullStock();
         ValidatorBuilder.from(quantity)
                 .validate(value -> value > fullStock, ErrorMessage.STOCK_SHORTAGE);
     }

@@ -44,7 +44,7 @@ public class PurchaseItemProcessor {
     }
 
     private void addItemToPurchase(PurchaseItem purchaseItem) {
-        itemNames.add(purchaseItem.getProduct().getName());
+        itemNames.add(purchaseItem.getProduct().name());
         purchaseItems.add(purchaseItem);
     }
 }
