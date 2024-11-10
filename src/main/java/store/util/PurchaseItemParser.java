@@ -2,7 +2,7 @@ package store.util;
 
 import java.util.Arrays;
 import java.util.List;
-import store.dto.ParsedItem;
+import store.dto.ParsedItemDto;
 import store.validation.PurchaseInputValidator;
 
 public class PurchaseItemParser {
@@ -20,12 +20,12 @@ public class PurchaseItemParser {
                 .toList();
     }
 
-    public static ParsedItem parseItem(String part) {
+    public static ParsedItemDto parseItem(String part) {
         String[] itemDetails = part.split(DETAIL_SPLITTER);
         String name = parseEachInput(itemDetails[NAME_INDEX]);
         int quantity = PurchaseInputValidator.validateQuantity(parseEachInput(itemDetails[QUANTITY_INDEX]));
 
-        return new ParsedItem(name, quantity);
+        return new ParsedItemDto(name, quantity);
     }
 
     private static String parseEachInput(String splitPart) {
