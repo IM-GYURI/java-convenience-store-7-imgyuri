@@ -11,6 +11,7 @@ public enum Statement {
     OUT_OF_STOCK("재고 없음 "),
     ADDITIONAL_PURCHASE_FORMAT("현재 %s은(는) %d개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)"),
     NO_PROMOTION_STATEMENT("현재 %s %d개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)"),
+    MEMBERSHIP_STATEMENT("멤버십 할인을 받으시겠습니까? (Y/N)"),
     BLANK(""),
     NEW_LINE(System.lineSeparator());
 
