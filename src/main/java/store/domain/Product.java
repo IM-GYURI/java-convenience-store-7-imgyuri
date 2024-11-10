@@ -4,13 +4,13 @@ public class Product {
 
     private String name;
     private int price;
-    private int quantity;
+    private Stock stock;
     private Promotion promotion;
 
-    public Product(String name, int price, int quantity, Promotion promotion) {
+    public Product(String name, int price, Stock stock, Promotion promotion) {
         this.name = name;
         this.price = price;
-        this.quantity = quantity;
+        this.stock = stock;
         this.promotion = promotion;
     }
 
@@ -22,8 +22,8 @@ public class Product {
         return price;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public Stock getStock() {
+        return stock;
     }
 
     public Promotion getPromotion() {
