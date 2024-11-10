@@ -1,5 +1,6 @@
 package store.view;
 
+import store.domain.Product;
 import store.domain.Products;
 
 public class View {
@@ -16,6 +17,10 @@ public class View {
         return inputView.requestProductSelect();
     }
 
+    public String askAdditionalPurchase(Product product) {
+        return inputView.askAdditionalPurchase(product);
+    }
+
     public void printHello() {
         outputView.printHello();
     }
@@ -23,6 +28,4 @@ public class View {
     public void printCurrentProducts(Products products) {
         outputView.printCurrentProducts(products);
     }
-
-
 }
