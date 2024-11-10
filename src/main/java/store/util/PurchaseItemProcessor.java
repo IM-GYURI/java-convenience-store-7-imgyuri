@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 import store.domain.Products;
 import store.domain.PurchaseItem;
-import store.dto.ParsedItem;
+import store.dto.ParsedItemDto;
 import store.validation.PurchaseInputValidator;
 
 public class PurchaseItemProcessor {
@@ -36,9 +36,9 @@ public class PurchaseItemProcessor {
 
     private void processItems(List<String> inputParts, Products products) {
         for (String part : inputParts) {
-            ParsedItem parsedItem = PurchaseItemParser.parseItem(part);
-            PurchaseInputValidator.validateStockAndDuplication(parsedItem, itemNames, products);
-            PurchaseItem purchaseItem = PurchaseItemFactory.createPurchaseItem(parsedItem, products);
+            ParsedItemDto parsedItemDto = PurchaseItemParser.parseItem(part);
+            PurchaseInputValidator.validateStockAndDuplication(parsedItemDto, itemNames, products);
+            PurchaseItem purchaseItem = PurchaseItemFactory.createPurchaseItem(parsedItemDto, products);
             addItemToPurchase(purchaseItem);
         }
     }
