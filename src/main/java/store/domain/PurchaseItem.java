@@ -26,7 +26,11 @@ public class PurchaseItem {
         this.quantity += product.getPromotion().calculateAdditionalPurchase(quantity);
     }
 
-    public Product product() {
+    public Product getProduct() {
         return product;
+    }
+
+    public int getQuantity() {
+        return quantity;
     }
 }
