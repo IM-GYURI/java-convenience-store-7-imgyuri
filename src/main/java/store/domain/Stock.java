@@ -14,6 +14,14 @@ public class Stock {
         return regularStock + promotionStock;
     }
 
+    public void updatePromotionStock(int quantity) {
+        promotionStock -= quantity;
+    }
+
+    public void updateRegularStock(int quantity) {
+        regularStock -= quantity;
+    }
+
     public int getRegularStock() {
         return regularStock;
     }
