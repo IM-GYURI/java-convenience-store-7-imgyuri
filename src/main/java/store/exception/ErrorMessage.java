@@ -6,7 +6,8 @@ public enum ErrorMessage {
     PURCHASE_ITEM_DUPLICATED("상품명이 중복되었습니다."),
     PRODUCT_NOT_EXISTS("해당 상품이 존재하지 않습니다."),
     INVALID_QUANTITY("수량은 1 이상이어야 합니다."),
-    PURCHASE_QUANTITY_NOT_INTEGER("구매 수량은 정수만 가능합니다.");
+    PURCHASE_QUANTITY_NOT_INTEGER("구매 수량은 정수만 가능합니다."),
+    INVALID_YN_INPUT("입력값은 'Y' 또는 'N'이어야 합니다.");
 
     private static final String PREFIX = "[ERROR] ";
 
