@@ -4,16 +4,16 @@ import java.util.List;
 import store.domain.Products;
 import store.domain.PurchaseItem;
 import store.util.ProductLoader;
-import store.util.PurchaseItemParser;
+import store.util.PurchaseItemProcessor;
 
 public class StoreService {
 
     private final ProductLoader productLoader;
-    private final PurchaseItemParser purchaseItemParser;
+    private final PurchaseItemProcessor purchaseItemProcessor;
 
-    public StoreService(ProductLoader productLoader, PurchaseItemParser purchaseItemParser) {
+    public StoreService(ProductLoader productLoader, PurchaseItemProcessor purchaseItemProcessor) {
         this.productLoader = productLoader;
-        this.purchaseItemParser = purchaseItemParser;
+        this.purchaseItemProcessor = purchaseItemProcessor;
     }
 
     public Products loadProductsFromFile(String productFilePath) {
@@ -21,6 +21,6 @@ public class StoreService {
     }
 
     public List<PurchaseItem> parsePurchaseItems(String inputStatement, Products products) {
-        return purchaseItemParser.parsePurchaseItems(inputStatement, products);
+        return purchaseItemProcessor.parsePurchaseItems(inputStatement, products);
     }
 }
