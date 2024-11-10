@@ -36,6 +36,10 @@ public class Promotion {
         return remain;
     }
 
+    public int calculateFreeQuantity(int purchaseQuantity) {
+        return purchaseQuantity / (buy + get);
+    }
+
     public String getName() {
         return name;
     }
