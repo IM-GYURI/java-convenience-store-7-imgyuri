@@ -13,7 +13,8 @@ public class InputView {
     }
 
     public String askAdditionalPurchase(Product product) {
-        System.out.printf(Statement.ADDITIONAL_PURCHASE_FORMAT.message + Statement.NEW_LINE.message,
+        System.out.printf(
+                Statement.NEW_LINE.message + Statement.ADDITIONAL_PURCHASE_FORMAT.message + Statement.NEW_LINE.message,
                 product.getName(), product.getPromotion().getGet());
         String userInput = Console.readLine();
 
