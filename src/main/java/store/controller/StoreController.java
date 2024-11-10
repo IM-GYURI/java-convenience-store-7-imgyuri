@@ -20,28 +20,32 @@ public class StoreController {
     private final View view;
     private final StoreService storeService;
 
+    private Products products;
+
     public StoreController(final View view, final StoreService storeService) {
         this.view = view;
         this.storeService = storeService;
     }
 
     public void enterStore() {
-        Products products = storeService.loadProductsFromFile(PRODUCT_FILE_PATH);
-        printStartStatements(products);
-
-        List<PurchaseItem> purchaseItems = parsePurchaseItemsFromInput(products);
-        processPromotions(purchaseItems);
-
-        view.printReceipt(handleMemberShip(purchaseItems));
-        storeService.updateProductStock(purchaseItems);
+        this.products = storeService.loadProductsFromFile(PRODUCT_FILE_PATH);
+        startPurchaseSession();
     }
 
-    private void printStartStatements(Products products) {
+    private void startPurchaseSession() {
+        printWelcomeAndProducts();
+        List<PurchaseItem> purchaseItems = parsePurchaseItemsFromInput();
+        processPromotions(purchaseItems);
+        completeTransaction(purchaseItems);
+        promptPurchaseAgain();
+    }
+
+    private void printWelcomeAndProducts() {
         view.printHello();
         view.printCurrentProducts(products);
     }
 
-    private List<PurchaseItem> parsePurchaseItemsFromInput(Products products) {
+    private List<PurchaseItem> parsePurchaseItemsFromInput() {
         return getValidInput(() ->
                 storeService.parsePurchaseItems(view.requestProductSelect(), products));
     }
@@ -49,41 +53,45 @@ public class StoreController {
     private void processPromotions(List<PurchaseItem> purchaseItems) {
         purchaseItems.forEach(purchaseItem -> {
             if (purchaseItem.needsAdditionalPurchase()) {
-                handlePromotion(purchaseItem);
+                promptAdditionalPurchase(purchaseItem);
             }
 
-            determineNoPromotion(purchaseItem);
+            checkAndHandleNoPromotion(purchaseItem);
         });
     }
 
-    private void determineNoPromotion(PurchaseItem purchaseItem) {
-        PromotionDetailDto promotionDetailDto = storeService.getPromotionDetail(purchaseItem);
-        Promotion promotion = purchaseItem.getProduct().promotion();
-        int remainingQuantity = promotionDetailDto.remainingQuantity();
-
-        if (promotion != null && remainingQuantity > 0) {
-            handleNoPromotion(purchaseItem.getProduct(), remainingQuantity);
-        }
+    private void completeTransaction(List<PurchaseItem> purchaseItems) {
+        ReceiptDto receiptDto = generateReceiptWithMembershipOption(purchaseItems);
+        view.printReceipt(receiptDto);
+        storeService.updateProductStock(purchaseItems);
     }
 
-    private void handlePromotion(PurchaseItem purchaseItem) {
+    private void promptAdditionalPurchase(PurchaseItem purchaseItem) {
         if (isYes(askAdditionalPurchase(purchaseItem.getProduct()))) {
             purchaseItem.buyMore();
         }
     }
 
-    private void handleNoPromotion(Product product, int shortageQuantity) {
-        if (!isYes(askOkWithNoPromotion(product, shortageQuantity))) {
-            // 처음부터 재시작
+    private void checkAndHandleNoPromotion(PurchaseItem purchaseItem) {
+        PromotionDetailDto promotionDetailDto = storeService.getPromotionDetail(purchaseItem);
+        Promotion promotion = purchaseItem.getProduct().promotion();
+        int remainingQuantity = promotionDetailDto.remainingQuantity();
+
+        if (promotion != null && remainingQuantity > 0) {
+            promptNoPromotion(purchaseItem.getProduct(), remainingQuantity);
         }
     }
 
-    private ReceiptDto handleMemberShip(List<PurchaseItem> purchaseItems) {
-        if (isYes(askMembership())) {
-            return generateReceipt(purchaseItems, true);
+    private void promptNoPromotion(Product product, int shortageQuantity) {
+        if (!isYes(askOkWithNoPromotion(product, shortageQuantity))) {
+            startPurchaseSession();
         }
+    }
 
-        return generateReceipt(purchaseItems, false);
+    private void promptPurchaseAgain() {
+        if (isYes(askPurchaseAgain())) {
+            startPurchaseSession();
+        }
     }
 
     private String askAdditionalPurchase(Product product) {
@@ -96,24 +104,16 @@ public class StoreController {
                 view.askNoPromotion(product, shortageQuantity));
     }
 
-    private String askMembership() {
-        return getValidInput(view::askMembership);
+    private String askPurchaseAgain() {
+        return getValidInput(view::askPurchaseAgain);
     }
 
     private boolean isYes(String yesOrNo) {
         return YES_ANSWER.equals(yesOrNo);
     }
 
-    private ReceiptDto generateReceipt(List<PurchaseItem> purchaseItems, boolean isMember) {
-        int totalQuantity = purchaseItems.stream()
-                .mapToInt(PurchaseItem::getQuantity)
-                .sum();
-        int totalPrice = storeService.calculateTotalPrice(purchaseItems);
-        int promotionDiscount = storeService.calculatePromotionDiscount(purchaseItems);
-        int membershipDiscount = storeService.calculateMembershipDiscount(totalPrice, isMember);
-
-        return new ReceiptDto(storeService.createPurchasedResults(purchaseItems)
-                , storeService.createGivenItems(purchaseItems), totalQuantity, totalPrice, promotionDiscount,
-                membershipDiscount, totalPrice - promotionDiscount - membershipDiscount);
+    private ReceiptDto generateReceiptWithMembershipOption(List<PurchaseItem> purchaseItems) {
+        boolean isMember = isYes(getValidInput(view::askMembership));
+        return storeService.generateReceipt(purchaseItems, isMember);
     }
 }
