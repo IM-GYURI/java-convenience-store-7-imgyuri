@@ -2,8 +2,7 @@ package store.view;
 
 import camp.nextstep.edu.missionutils.Console;
 import store.domain.Product;
-import store.exception.ErrorMessage;
-import store.exception.ValidatorBuilder;
+import store.validation.CommonInputValidator;
 
 public class InputView {
 
@@ -18,15 +17,16 @@ public class InputView {
                 product.getName(), product.getPromotion().getGet());
         String userInput = Console.readLine();
 
-        validateInput(userInput);
+        CommonInputValidator.validateInput(userInput);
         return userInput;
     }
 
-    private void validateInput(String userInput) {
-        ValidatorBuilder.from(userInput)
-                .validate(input -> input == null || input.isBlank(), ErrorMessage.INPUT_NOT_EMPTY)
-                .validate(input -> !input.equals(Statement.YES_ANSWER.message) && !input.equals(
-                        Statement.NO_ANSWER.message), ErrorMessage.INVALID_YN_INPUT)
-                .get();
+    public String askNoPromotion(Product product, int shortageQuantity) {
+        System.out.printf(Statement.NEW_LINE.message + Statement.NO_PROMOTION_STATEMENT.message
+                + Statement.NEW_LINE.message, product.getName(), shortageQuantity);
+        String userInput = Console.readLine();
+
+        CommonInputValidator.validateInput(userInput);
+        return userInput;
     }
 }
