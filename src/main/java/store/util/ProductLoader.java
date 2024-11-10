@@ -61,7 +61,7 @@ public class ProductLoader {
 
     private Product findProductByName(String name) {
         return products.stream()
-                .filter(product -> product.getName().equals(name))
+                .filter(product -> product.name().equals(name))
                 .findFirst()
                 .orElse(null);
     }
@@ -78,7 +78,7 @@ public class ProductLoader {
     }
 
     private void updateStock(Product product, int stockQuantity, Promotion promotion) {
-        Stock currentStock = product.getStock();
+        Stock currentStock = product.stock();
 
         if (promotion != null) {
             currentStock.setPromotionStock(stockQuantity);
