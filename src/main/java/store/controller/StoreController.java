@@ -6,6 +6,7 @@ import java.util.List;
 import store.domain.Product;
 import store.domain.Products;
 import store.domain.PurchaseItem;
+import store.dto.ReceiptDto;
 import store.service.StoreService;
 import store.view.View;
 
@@ -22,13 +23,14 @@ public class StoreController {
         this.storeService = storeService;
     }
 
-    public void buyProducts() {
+    public void enterStore() {
         view.printHello();
         Products products = storeService.loadProductsFromFile(PRODUCT_FILE_PATH);
         view.printCurrentProducts(products);
 
         List<PurchaseItem> purchaseItems = parsePurchaseItemsFromInput(products);
         processPromotions(purchaseItems);
+        ReceiptDto receipt = handleMemberShip(purchaseItems);
     }
 
     private List<PurchaseItem> parsePurchaseItemsFromInput(Products products) {
@@ -38,15 +40,27 @@ public class StoreController {
 
     private void processPromotions(List<PurchaseItem> purchaseItems) {
         purchaseItems.forEach(purchaseItem -> {
-            if (!purchaseItem.needsAdditionalPurchase()) {
-                Product product = purchaseItem.getProduct();
-
-                int shortageQuantity = product.calculateRegularQuantity(purchaseItem.getQuantity());
-                handleNoPromotion(product, shortageQuantity);
-                return;
+            if (purchaseItem.needsAdditionalPurchase()) {
+                handlePromotion(purchaseItem);
             }
-            handlePromotion(purchaseItem);
+
+            determineNoPromotion(purchaseItem);
         });
+    }
+
+    private void determineNoPromotion(PurchaseItem purchaseItem) {
+        int shortageQuantity = calculateShortageQuantity(purchaseItem);
+        if (shortageQuantity > 0) {
+            handleNoPromotion(purchaseItem.getProduct(), shortageQuantity);
+        }
+    }
+
+    private int calculateShortageQuantity(PurchaseItem purchaseItem) {
+        if (purchaseItem.getProduct().getPromotion() != null) {
+            return purchaseItem.getQuantity() - purchaseItem.getProduct().getStock().getPromotionStock();
+        }
+
+        return 0;
     }
 
     private void handlePromotion(PurchaseItem purchaseItem) {
@@ -61,6 +75,14 @@ public class StoreController {
         }
     }
 
+    private ReceiptDto handleMemberShip(List<PurchaseItem> purchaseItems) {
+        if (isYes(askMembership())) {
+            return generateReceipt(purchaseItems, true);
+        }
+
+        return generateReceipt(purchaseItems, false);
+    }
+
     private String askAdditionalPurchase(Product product) {
         return getValidInput(() ->
                 view.askAdditionalPurchase(product));
@@ -71,7 +93,21 @@ public class StoreController {
                 view.askNoPromotion(product, shortageQuantity));
     }
 
+    private String askMembership() {
+        return getValidInput(view::askMembership);
+    }
+
     private boolean isYes(String yesOrNo) {
         return YES_ANSWER.equals(yesOrNo);
+    }
+
+    private ReceiptDto generateReceipt(List<PurchaseItem> purchaseItems, boolean isMember) {
+        int totalPrice = storeService.calculateTotalPrice(purchaseItems);
+        int promotionDiscount = storeService.calculatePromotionDiscount(purchaseItems);
+        int membershipDiscount = storeService.calculateMembershipDiscount(totalPrice, isMember);
+
+        return new ReceiptDto(storeService.createPurchasedResults(purchaseItems)
+                , storeService.createGivenItems(purchaseItems), totalPrice, promotionDiscount, membershipDiscount
+                , totalPrice - promotionDiscount - membershipDiscount);
     }
 }
