@@ -22,7 +22,7 @@ public class PurchaseInputValidator {
                                                    Products products) {
         Product product = findMatchProduct(parsedItemDto.name(), products);
         validateStock(product, parsedItemDto.quantity());
-        validateDuplication(parsedItemDto.name(), itemNames, products);
+        validateDuplication(parsedItemDto.name(), itemNames);
     }
 
     public static int validateQuantity(String input) {
@@ -45,7 +45,7 @@ public class PurchaseInputValidator {
                 .validate(value -> value > fullStock, ErrorMessage.STOCK_SHORTAGE);
     }
 
-    private static void validateDuplication(String name, Set<String> itemNames, Products products) {
+    private static void validateDuplication(String name, Set<String> itemNames) {
         ValidatorBuilder.from(name)
                 .validate(itemNames::contains, ErrorMessage.PURCHASE_ITEM_DUPLICATED);
     }
