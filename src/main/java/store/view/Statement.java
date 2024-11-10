@@ -8,7 +8,10 @@ public enum Statement {
     NUMBER_FORMAT("#,###"),
     PRODUCT_FORMAT("- %s %s원 "),
     QUANTITY_FORMAT("%s개 "),
-    OUT_OF_STOCK("재고 없음"),
+    OUT_OF_STOCK("재고 없음 "),
+    ADDITIONAL_PURCHASE_FORMAT("현재 %s은(는) %d개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)"),
+    YES_ANSWER("Y"),
+    NO_ANSWER("N"),
     BLANK(""),
     NEW_LINE(System.lineSeparator());
 
