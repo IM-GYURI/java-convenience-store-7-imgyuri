@@ -1,6 +1,6 @@
 package store.view;
 
-public enum Statement {
+public enum Sentence {
 
     PRODUCT_SELECT_STATEMENT("구매하실 상품명과 수량을 입력해 주세요. (예: [사이다-2],[감자칩-1])"),
     HELLO_STATEMENT("안녕하세요. W편의점입니다."),
@@ -28,7 +28,7 @@ public enum Statement {
 
     final String message;
 
-    Statement(final String message) {
+    Sentence(final String message) {
         this.message = message;
     }
 }

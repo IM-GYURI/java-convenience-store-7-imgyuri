@@ -11,13 +11,13 @@ public class InputView {
     private static final String NO_ANSWER = "N";
 
     public String requestProductSelect() {
-        System.out.println(Statement.PRODUCT_SELECT_STATEMENT.message);
+        System.out.println(Sentence.PRODUCT_SELECT_STATEMENT.message);
         return Console.readLine();
     }
 
     public String askAdditionalPurchase(Product product) {
         System.out.printf(
-                Statement.NEW_LINE.message + Statement.ADDITIONAL_PURCHASE_FORMAT.message + Statement.NEW_LINE.message,
+                Sentence.NEW_LINE.message + Sentence.ADDITIONAL_PURCHASE_FORMAT.message + Sentence.NEW_LINE.message,
                 product.name(), product.promotion().getGet());
         String userInput = Console.readLine();
 
@@ -26,8 +26,8 @@ public class InputView {
     }
 
     public String askNoPromotion(Product product, int shortageQuantity) {
-        System.out.printf(Statement.NEW_LINE.message + Statement.NO_PROMOTION_STATEMENT.message
-                + Statement.NEW_LINE.message, product.name(), shortageQuantity);
+        System.out.printf(Sentence.NEW_LINE.message + Sentence.NO_PROMOTION_STATEMENT.message
+                + Sentence.NEW_LINE.message, product.name(), shortageQuantity);
         String userInput = Console.readLine();
 
         validateInput(userInput);
@@ -35,7 +35,7 @@ public class InputView {
     }
 
     public String askMembership() {
-        System.out.println(Statement.NEW_LINE.message + Statement.MEMBERSHIP_STATEMENT.message);
+        System.out.println(Sentence.NEW_LINE.message + Sentence.MEMBERSHIP_STATEMENT.message);
         String userInput = Console.readLine();
 
         validateInput(userInput);
@@ -43,7 +43,7 @@ public class InputView {
     }
 
     public String askPurchaseAgain() {
-        System.out.println(Statement.NEW_LINE.message + Statement.PURCHASE_AGAIN_STATEMENT.message);
+        System.out.println(Sentence.NEW_LINE.message + Sentence.PURCHASE_AGAIN_STATEMENT.message);
         String userInput = Console.readLine();
 
         validateInput(userInput);

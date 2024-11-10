@@ -11,26 +11,26 @@ import store.dto.ReceiptDto;
 public class OutputView {
 
     public static void printErrorMessage(String errorMessage) {
-        System.out.println(errorMessage + Statement.NEW_LINE.message);
+        System.out.println(errorMessage + Sentence.NEW_LINE.message);
     }
 
     public void printHello() {
-        System.out.println(Statement.HELLO_STATEMENT.message);
+        System.out.println(Sentence.HELLO_STATEMENT.message);
     }
 
     public void printCurrentProducts(Products products) {
-        System.out.println(Statement.CURRENT_PRODUCTS_STATEMENT.message + Statement.NEW_LINE.message);
+        System.out.println(Sentence.CURRENT_PRODUCTS_STATEMENT.message + Sentence.NEW_LINE.message);
         printEachProduct(products.products());
     }
 
     public void printReceipt(ReceiptDto receiptDto) {
-        System.out.println(Statement.NEW_LINE.message + Statement.START_OF_RECEIPT.message);
-        System.out.println(Statement.HEADER_OF_PURCHASE.message);
+        System.out.println(Sentence.NEW_LINE.message + Sentence.START_OF_RECEIPT.message);
+        System.out.println(Sentence.HEADER_OF_PURCHASE.message);
         printPurchases(receiptDto.purchasedItems());
 
-        System.out.println(Statement.HEADER_OF_GIVEN.message);
+        System.out.println(Sentence.HEADER_OF_GIVEN.message);
         printGivenItems(receiptDto.givenItems());
-        System.out.println(Statement.DIVIDE_LINE.message);
+        System.out.println(Sentence.DIVIDE_LINE.message);
 
         printFooter(receiptDto);
     }
@@ -44,11 +44,11 @@ public class OutputView {
         if (product.promotion() != null) {
             System.out.println(formatProduct(product
                     , product.stock().getPromotionStock(), product.promotion().getName()));
-            System.out.println(formatProduct(product, product.stock().getRegularStock(), Statement.BLANK.message));
+            System.out.println(formatProduct(product, product.stock().getRegularStock(), Sentence.BLANK.message));
             return;
         }
 
-        System.out.println(formatProduct(product, product.stock().getRegularStock(), Statement.BLANK.message));
+        System.out.println(formatProduct(product, product.stock().getRegularStock(), Sentence.BLANK.message));
     }
 
     private void printPurchases(List<PurchasedDto> purchasedItems) {
@@ -56,7 +56,7 @@ public class OutputView {
     }
 
     private void printEachPurchase(PurchasedDto purchasedDto) {
-        System.out.printf(Statement.PURCHASE_FORMAT.message + Statement.NEW_LINE.message
+        System.out.printf(Sentence.PURCHASE_FORMAT.message + Sentence.NEW_LINE.message
                 , purchasedDto.name(), formatNumber(purchasedDto.quantity())
                 , formatNumber(purchasedDto.totalPrice()));
     }
@@ -67,47 +67,47 @@ public class OutputView {
 
     private void printEachGivenItem(GivenItemDto givenItemDto) {
         if (givenItemDto.freeQuantity() != 0) {
-            System.out.printf(Statement.GIVEN_FORMAT.message + Statement.NEW_LINE.message
+            System.out.printf(Sentence.GIVEN_FORMAT.message + Sentence.NEW_LINE.message
                     , givenItemDto.name(), formatNumber(givenItemDto.freeQuantity()));
         }
     }
 
     private void printFooter(ReceiptDto receiptDto) {
-        System.out.printf(Statement.TOTAL_PRICE_FORMAT.message + Statement.NEW_LINE.message,
+        System.out.printf(Sentence.TOTAL_PRICE_FORMAT.message + Sentence.NEW_LINE.message,
                 receiptDto.totalQuantity(), formatNumber(receiptDto.totalPrice()));
-        System.out.printf(Statement.PROMOTION_DISCOUNT_FORMAT.message + Statement.NEW_LINE.message
+        System.out.printf(Sentence.PROMOTION_DISCOUNT_FORMAT.message + Sentence.NEW_LINE.message
                 , formatNumber(receiptDto.promotionDiscountPrice()));
-        System.out.printf(Statement.MEMBERSHIP_DISCOUNT_FORMAT.message + Statement.NEW_LINE.message
+        System.out.printf(Sentence.MEMBERSHIP_DISCOUNT_FORMAT.message + Sentence.NEW_LINE.message
                 , formatNumber(receiptDto.membershipDiscountPrice()));
-        System.out.printf(Statement.PAY_PRICE_FORMAT.message + Statement.NEW_LINE.message
+        System.out.printf(Sentence.PAY_PRICE_FORMAT.message + Sentence.NEW_LINE.message
                 , formatNumber(receiptDto.payPrice()));
     }
 
     private String formatProduct(Product product, int stock, String promotion) {
-        return String.format(Statement.PRODUCT_FORMAT.message
+        return String.format(Sentence.PRODUCT_FORMAT.message
                 , product.name(), formatNumber(product.price()))
                 + formatQuantity(stock)
                 + formatPromotion(promotion);
     }
 
     private String formatNumber(int number) {
-        DecimalFormat decimalFormat = new DecimalFormat(Statement.NUMBER_FORMAT.message);
+        DecimalFormat decimalFormat = new DecimalFormat(Sentence.NUMBER_FORMAT.message);
         return decimalFormat.format(number);
     }
 
     private String formatQuantity(int quantity) {
         if (quantity > 0) {
-            return String.format(Statement.QUANTITY_FORMAT.message, formatNumber(quantity));
+            return String.format(Sentence.QUANTITY_FORMAT.message, formatNumber(quantity));
         }
 
-        return Statement.OUT_OF_STOCK.message;
+        return Sentence.OUT_OF_STOCK.message;
     }
 
     private String formatPromotion(String promotionName) {
-        if (!promotionName.equals(Statement.BLANK.message)) {
+        if (!promotionName.equals(Sentence.BLANK.message)) {
             return promotionName;
         }
 
-        return Statement.BLANK.message;
+        return Sentence.BLANK.message;
     }
 }
