@@ -2,6 +2,7 @@ package store.view;
 
 import store.domain.Product;
 import store.domain.Products;
+import store.dto.ReceiptDto;
 
 public class View {
 
@@ -35,5 +36,9 @@ public class View {
 
     public void printCurrentProducts(Products products) {
         outputView.printCurrentProducts(products);
+    }
+
+    public void printReceipt(ReceiptDto receiptDto) {
+        outputView.printReceipt(receiptDto);
     }
 }
