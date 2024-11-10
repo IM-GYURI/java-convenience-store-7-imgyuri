@@ -7,12 +7,10 @@ public class PromotionCalculator {
 
     public static int calculatePromotionDiscount(PurchaseItem purchaseItem) {
         Product product = purchaseItem.getProduct();
+        int price = product.price();
 
-        int quantity = purchaseItem.getQuantity();
-        int price = product.getPrice();
-
-        if (product.getPromotion() != null) {
-            int eligibleForPromotion = product.getPromotion().calculateFreeQuantity(quantity);
+        if (product.promotion() != null) {
+            int eligibleForPromotion = product.promotion().calculateFreeQuantity(purchaseItem.getQuantity());
             return eligibleForPromotion * price;
         }
 
