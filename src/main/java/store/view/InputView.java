@@ -29,4 +29,12 @@ public class InputView {
         CommonInputValidator.validateInput(userInput);
         return userInput;
     }
+
+    public String askMembership() {
+        System.out.println(Statement.NEW_LINE.message + Statement.MEMBERSHIP_STATEMENT.message);
+        String userInput = Console.readLine();
+
+        CommonInputValidator.validateInput(userInput);
+        return userInput;
+    }
 }
