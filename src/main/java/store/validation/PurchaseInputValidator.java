@@ -3,7 +3,7 @@ package store.validation;
 import java.util.Set;
 import store.domain.Product;
 import store.domain.Products;
-import store.dto.ParsedItem;
+import store.dto.ParsedItemDto;
 import store.exception.ErrorMessage;
 import store.exception.ValidatorBuilder;
 
@@ -18,11 +18,11 @@ public class PurchaseInputValidator {
                 .validate(value -> !value.matches(PURCHASE_ITEM_REGEX), ErrorMessage.INVALID_PURCHASE_FORMAT);
     }
 
-    public static void validateStockAndDuplication(ParsedItem parsedItem, Set<String> itemNames,
+    public static void validateStockAndDuplication(ParsedItemDto parsedItemDto, Set<String> itemNames,
                                                    Products products) {
-        Product product = findMatchProduct(parsedItem.name(), products);
-        validateStock(product, parsedItem.quantity());
-        validateDuplication(parsedItem.name(), itemNames, products);
+        Product product = findMatchProduct(parsedItemDto.name(), products);
+        validateStock(product, parsedItemDto.quantity());
+        validateDuplication(parsedItemDto.name(), itemNames, products);
     }
 
     public static int validateQuantity(String input) {
@@ -33,7 +33,7 @@ public class PurchaseInputValidator {
     }
 
     private static Product findMatchProduct(String name, Products products) {
-        return products.getProducts().stream()
+        return products.products().stream()
                 .filter(product -> product.getName().equals(name))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(ErrorMessage.PRODUCT_NOT_EXISTS.name()));
