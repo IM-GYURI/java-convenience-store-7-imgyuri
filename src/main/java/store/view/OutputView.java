@@ -17,7 +17,7 @@ public class OutputView {
     }
 
     public static void printErrorMessage(String errorMessage) {
-        System.out.println(Statement.NEW_LINE.message + errorMessage);
+        System.out.println(errorMessage + Statement.NEW_LINE.message);
     }
 
     private void printEachProduct(List<Product> products) {
