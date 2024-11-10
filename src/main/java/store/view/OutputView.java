@@ -13,7 +13,7 @@ public class OutputView {
 
     public void printCurrentProducts(Products products) {
         System.out.println(Statement.CURRENT_PRODUCTS_STATEMENT.message + Statement.NEW_LINE.message);
-        printEachProduct(products.getProducts());
+        printEachProduct(products.products());
     }
 
     public static void printErrorMessage(String errorMessage) {
