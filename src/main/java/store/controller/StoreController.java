@@ -5,7 +5,9 @@ import static store.exception.ExceptionHandler.getValidInput;
 import java.util.List;
 import store.domain.Product;
 import store.domain.Products;
+import store.domain.Promotion;
 import store.domain.PurchaseItem;
+import store.dto.PromotionDetailDto;
 import store.dto.ReceiptDto;
 import store.service.StoreService;
 import store.view.View;
@@ -24,13 +26,19 @@ public class StoreController {
     }
 
     public void enterStore() {
-        view.printHello();
         Products products = storeService.loadProductsFromFile(PRODUCT_FILE_PATH);
-        view.printCurrentProducts(products);
+        printStartStatements(products);
 
         List<PurchaseItem> purchaseItems = parsePurchaseItemsFromInput(products);
         processPromotions(purchaseItems);
-        ReceiptDto receipt = handleMemberShip(purchaseItems);
+
+        view.printReceipt(handleMemberShip(purchaseItems));
+        storeService.updateProductStock(purchaseItems);
+    }
+
+    private void printStartStatements(Products products) {
+        view.printHello();
+        view.printCurrentProducts(products);
     }
 
     private List<PurchaseItem> parsePurchaseItemsFromInput(Products products) {
@@ -49,18 +57,13 @@ public class StoreController {
     }
 
     private void determineNoPromotion(PurchaseItem purchaseItem) {
-        int shortageQuantity = calculateShortageQuantity(purchaseItem);
-        if (shortageQuantity > 0) {
-            handleNoPromotion(purchaseItem.getProduct(), shortageQuantity);
-        }
-    }
+        PromotionDetailDto promotionDetailDto = storeService.getPromotionDetail(purchaseItem);
+        Promotion promotion = purchaseItem.getProduct().promotion();
+        int remainingQuantity = promotionDetailDto.remainingQuantity();
 
-    private int calculateShortageQuantity(PurchaseItem purchaseItem) {
-        if (purchaseItem.getProduct().getPromotion() != null) {
-            return purchaseItem.getQuantity() - purchaseItem.getProduct().getStock().getPromotionStock();
+        if (promotion != null && remainingQuantity > 0) {
+            handleNoPromotion(purchaseItem.getProduct(), remainingQuantity);
         }
-
-        return 0;
     }
 
     private void handlePromotion(PurchaseItem purchaseItem) {
@@ -102,12 +105,15 @@ public class StoreController {
     }
 
     private ReceiptDto generateReceipt(List<PurchaseItem> purchaseItems, boolean isMember) {
+        int totalQuantity = purchaseItems.stream()
+                .mapToInt(PurchaseItem::getQuantity)
+                .sum();
         int totalPrice = storeService.calculateTotalPrice(purchaseItems);
         int promotionDiscount = storeService.calculatePromotionDiscount(purchaseItems);
         int membershipDiscount = storeService.calculateMembershipDiscount(totalPrice, isMember);
 
         return new ReceiptDto(storeService.createPurchasedResults(purchaseItems)
-                , storeService.createGivenItems(purchaseItems), totalPrice, promotionDiscount, membershipDiscount
-                , totalPrice - promotionDiscount - membershipDiscount);
+                , storeService.createGivenItems(purchaseItems), totalQuantity, totalPrice, promotionDiscount,
+                membershipDiscount, totalPrice - promotionDiscount - membershipDiscount);
     }
 }
