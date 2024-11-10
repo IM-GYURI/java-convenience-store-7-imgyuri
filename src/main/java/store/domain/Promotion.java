@@ -2,6 +2,7 @@ package store.domain;
 
 import camp.nextstep.edu.missionutils.DateTimes;
 import java.time.LocalDate;
+import store.dto.PromotionDetailDto;
 
 public class Promotion {
 
@@ -27,17 +28,26 @@ public class Promotion {
     }
 
     public int calculateAdditionalPurchase(int purchaseQuantity) {
-        int remain = purchaseQuantity % (buy + get);
+        int remain = purchaseQuantity % sumOfBuyAndGet();
 
         if (remain != 0) {
-            return (buy + get) - remain;
+            return sumOfBuyAndGet() - remain;
         }
 
         return remain;
     }
 
-    public int calculateFreeQuantity(int purchaseQuantity) {
-        return purchaseQuantity / (buy + get);
+    public PromotionDetailDto calculatePromotionAndFree(int requestedQuantity, int promotionStock) {
+        int availablePromotion = (promotionStock / sumOfBuyAndGet()) * sumOfBuyAndGet();
+        return new PromotionDetailDto(availablePromotion, requestedQuantity - availablePromotion);
+    }
+
+    public int calculateFreeQuantity(int promotionStock) {
+        return promotionStock / sumOfBuyAndGet();
+    }
+
+    private int sumOfBuyAndGet() {
+        return buy + get;
     }
 
     public String getName() {
