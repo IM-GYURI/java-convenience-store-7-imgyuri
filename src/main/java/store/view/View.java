@@ -30,6 +30,10 @@ public class View {
         return inputView.askMembership();
     }
 
+    public String askPurchaseAgain() {
+        return inputView.askPurchaseAgain();
+    }
+
     public void printHello() {
         outputView.printHello();
     }
