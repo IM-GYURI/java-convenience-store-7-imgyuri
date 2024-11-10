@@ -51,10 +51,8 @@ public class PurchaseItemParser {
             String name = parseEachInput(itemDetails[NAME_INDEX]);
             int quantity = validateQuantity(parseEachInput(itemDetails[QUANTITY_INDEX]));
 
-            validateItemName(name, products);
-            itemNames.add(name);
-
-            purchaseItems.add(new PurchaseItem(findMatchProduct(name, products), quantity));
+            validateStockAndItemName(name, quantity, products);
+            addItemToPurchase(name, quantity, products);
         }
     }
 
@@ -76,6 +74,12 @@ public class PurchaseItemParser {
                 .orElseThrow(() -> new IllegalArgumentException(ErrorMessage.PRODUCT_NOT_EXISTS.name()));
     }
 
+    private void validateStockAndItemName(String name, int quantity, Products products) {
+        Product product = findMatchProduct(name, products);
+        validateStock(product, quantity);
+        validateItemName(name, products);
+    }
+
     private void validateItemName(String name, Products products) {
         ValidatorBuilder.from(name)
                 .validate(itemNames::contains, ErrorMessage.PURCHASE_ITEM_DUPLICATED)
@@ -87,5 +91,17 @@ public class PurchaseItemParser {
                 .validateIsInteger()
                 .validateInteger(value -> value < QUANTITY_STANDARD, ErrorMessage.INVALID_QUANTITY)
                 .getNumericValue();
+    }
+
+    private void validateStock(Product product, int quantity) {
+        int fullStock = product.getStock().getFullStock();
+
+        ValidatorBuilder.from(quantity)
+                .validate(value -> value > fullStock, ErrorMessage.STOCK_SHORTAGE);
+    }
+
+    private void addItemToPurchase(String name, int quantity, Products products) {
+        itemNames.add(name);
+        purchaseItems.add(new PurchaseItem(findMatchProduct(name, products), quantity));
     }
 }
