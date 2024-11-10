@@ -16,7 +16,8 @@ public class PurchaseItem {
         if (promotion != null && promotion.isWithinPromotionPeriod()) {
             int additionalPurchase = promotion.calculateAdditionalPurchase(quantity);
 
-            return additionalPurchase > 0;
+            return additionalPurchase > 0
+                    && quantity + additionalPurchase <= product.getStock().getPromotionStock();
         }
 
         return false;
