@@ -19,9 +19,10 @@ public enum Statement {
     GIVEN_FORMAT("%s\t\t%s"),
     DIVIDE_LINE("===================================="),
     TOTAL_PRICE_FORMAT("총구매액\t\t%s\t%s"),
-    PROMOTION_DISCOUNT_FORMAT("행사할인\t\t\t%s"),
-    MEMBERSHIP_DISCOUNT_FORMAT("멤버십할인\t\t\t%s"),
+    PROMOTION_DISCOUNT_FORMAT("행사할인\t\t\t-%s"),
+    MEMBERSHIP_DISCOUNT_FORMAT("멤버십할인\t\t\t-%s"),
     PAY_PRICE_FORMAT("내실돈\t\t\t %s"),
+    PURCHASE_AGAIN_STATEMENT("감사합니다. 구매하고 싶은 다른 상품이 있나요? (Y/N)"),
     BLANK(""),
     NEW_LINE(System.lineSeparator());
 
