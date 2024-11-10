@@ -10,12 +10,12 @@ public class Products {
         this.products = products;
     }
 
-    public List<Product> getProducts() {
-        return products;
-    }
-
     public boolean existsProduct(String productName) {
         return products.stream()
                 .anyMatch(product -> product.getName().equals(productName));
+    }
+
+    public List<Product> getProducts() {
+        return products;
     }
 }
