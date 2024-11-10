@@ -11,7 +11,12 @@ import store.domain.Promotion;
 
 public class PromotionLoader {
 
-    private final static String SPLITTER = ",";
+    private static final String SPLITTER = ",";
+    private static final int NAME_INDEX = 0;
+    private static final int BUY_INDEX = 1;
+    private static final int GET_INDEX = 2;
+    private static final int START_DATE_INDEX = 3;
+    private static final int END_DATE_INDEX = 4;
 
     public Map<String, Promotion> loadPromotions(String filePath) {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
@@ -38,11 +43,11 @@ public class PromotionLoader {
     private Promotion createPromotion(String line) {
         String[] parts = line.split(SPLITTER);
 
-        String name = parts[0];
-        int buy = parseNumber(parts[1]);
-        int get = parseNumber(parts[2]);
-        LocalDate startDate = parseDate(parts[3]);
-        LocalDate endDate = parseDate(parts[4]);
+        String name = parts[NAME_INDEX];
+        int buy = parseNumber(parts[BUY_INDEX]);
+        int get = parseNumber(parts[GET_INDEX]);
+        LocalDate startDate = parseDate(parts[START_DATE_INDEX]);
+        LocalDate endDate = parseDate(parts[END_DATE_INDEX]);
 
         return new Promotion(name, buy, get, startDate, endDate);
     }
