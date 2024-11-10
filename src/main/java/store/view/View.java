@@ -21,6 +21,10 @@ public class View {
         return inputView.askAdditionalPurchase(product);
     }
 
+    public String askNoPromotion(Product product, int shortageQuantity) {
+        return inputView.askNoPromotion(product, shortageQuantity);
+    }
+
     public void printHello() {
         outputView.printHello();
     }
