@@ -9,8 +9,9 @@ public class PromotionCalculator {
         Product product = purchaseItem.getProduct();
         int price = product.price();
 
-        if (product.promotion() != null) {
-            int eligibleForPromotion = product.promotion().calculateFreeQuantity(purchaseItem.getQuantity());
+        if (product.promotion() != null && product.promotion().isWithinPromotionPeriod()) {
+            int eligibleForPromotion = product.promotion()
+                    .calculateFreeQuantity(purchaseItem.getQuantity(), product.stock().getPromotionStock());
             return eligibleForPromotion * price;
         }
 
