@@ -14,6 +14,13 @@ public class Product {
         this.promotion = promotion;
     }
 
+    public int calculateRegularQuantity(int requestedQuantity) {
+        int promotionStock = stock.getPromotionStock();
+        int availableForPromotion = Math.min(promotionStock, requestedQuantity);
+
+        return requestedQuantity - availableForPromotion;
+    }
+
     public String getName() {
         return name;
     }
