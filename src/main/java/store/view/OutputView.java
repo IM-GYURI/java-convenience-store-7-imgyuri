@@ -10,8 +10,6 @@ import store.dto.ReceiptDto;
 
 public class OutputView {
 
-    private static final int MINUS_FOR_DISCOUNT = -1;
-
     public static void printErrorMessage(String errorMessage) {
         System.out.println(errorMessage + Statement.NEW_LINE.message);
     }
@@ -26,7 +24,7 @@ public class OutputView {
     }
 
     public void printReceipt(ReceiptDto receiptDto) {
-        System.out.println(Statement.START_OF_RECEIPT.message);
+        System.out.println(Statement.NEW_LINE.message + Statement.START_OF_RECEIPT.message);
         System.out.println(Statement.HEADER_OF_PURCHASE.message);
         printPurchases(receiptDto.purchasedItems());
 
@@ -78,9 +76,9 @@ public class OutputView {
         System.out.printf(Statement.TOTAL_PRICE_FORMAT.message + Statement.NEW_LINE.message,
                 receiptDto.totalQuantity(), formatNumber(receiptDto.totalPrice()));
         System.out.printf(Statement.PROMOTION_DISCOUNT_FORMAT.message + Statement.NEW_LINE.message
-                , formatNumber(MINUS_FOR_DISCOUNT * receiptDto.promotionDiscountPrice()));
+                , formatNumber(receiptDto.promotionDiscountPrice()));
         System.out.printf(Statement.MEMBERSHIP_DISCOUNT_FORMAT.message + Statement.NEW_LINE.message
-                , formatNumber(MINUS_FOR_DISCOUNT * receiptDto.membershipDiscountPrice()));
+                , formatNumber(receiptDto.membershipDiscountPrice()));
         System.out.printf(Statement.PAY_PRICE_FORMAT.message + Statement.NEW_LINE.message
                 , formatNumber(receiptDto.payPrice()));
     }
