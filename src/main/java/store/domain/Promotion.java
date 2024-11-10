@@ -42,8 +42,12 @@ public class Promotion {
         return new PromotionDetailDto(availablePromotion, requestedQuantity - availablePromotion);
     }
 
-    public int calculateFreeQuantity(int promotionStock) {
-        return promotionStock / sumOfBuyAndGet();
+    public int calculateFreeQuantity(int requestedQuantity, int promotionStock) {
+        if (requestedQuantity > promotionStock) {
+            return promotionStock / sumOfBuyAndGet();
+        }
+
+        return requestedQuantity / sumOfBuyAndGet();
     }
 
     private int sumOfBuyAndGet() {
