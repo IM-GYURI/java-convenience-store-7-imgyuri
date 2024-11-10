@@ -6,14 +6,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import store.domain.Product;
 import store.domain.Products;
 import store.domain.Promotion;
+import store.domain.Stock;
 
 public class ProductLoader {
 
-    private final static String SPLITTER = ",";
+    private static final String SPLITTER = ",";
+    private static final int NAME_INDEX = 0;
+    private static final int PRICE_INDEX = 1;
+    private static final int STOCK_INDEX = 2;
+    private static final int PROMOTION_INDEX = 3;
 
     private final Map<String, Promotion> promotions;
     private final List<Product> products;
@@ -24,13 +28,9 @@ public class ProductLoader {
     }
 
     public Products loadProducts(String filePath) {
-        Optional<Product> lastProduct = Optional.empty();
-
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             br.readLine();
-            for (String line : (Iterable<String>) br.lines()::iterator) {
-                lastProduct = Optional.of(processLine(line, lastProduct.orElse(null)));
-            }
+            br.lines().forEach(this::processLine);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -38,40 +38,54 @@ public class ProductLoader {
         return new Products(products.stream().toList());
     }
 
-    private Product processLine(String line, Product lastProduct) {
-        Product product = createProduct(line);
-
-        if (lastProduct != null) {
-            if (lastProduct.getPromotion() != null
-                    && !product.getName().equals(lastProduct.getName())) {
-                addNoPromotionProduct(lastProduct);
-            }
-        }
-        products.add(product);
-
-        return product;
-    }
-
-    private Product createProduct(String line) {
+    private void processLine(String line) {
         String[] parts = line.split(SPLITTER);
+        String name = parts[NAME_INDEX];
+        int price = parseNumber(parts[PRICE_INDEX]);
+        int stockQuantity = parseNumber(parts[STOCK_INDEX]);
+        Promotion promotion = parsePromotion(parts[PROMOTION_INDEX]);
 
-        String name = parts[0];
-        int price = parseNumber(parts[1]);
-        int quantity = parseNumber(parts[2]);
-        Promotion promotion = parsePromotion(parts[3]);
-
-        return new Product(name, price, quantity, promotion);
+        updateOrAddProduct(name, price, stockQuantity, promotion);
     }
 
-    private void addNoPromotionProduct(Product lastProduct) {
-        products.add(
-                new Product(
-                        lastProduct.getName(),
-                        lastProduct.getPrice(),
-                        0,
-                        null
-                )
-        );
+    private void updateOrAddProduct(String name, int price, int stockQuantity, Promotion promotion) {
+        Product existingProduct = findProductByName(name);
+
+        if (existingProduct == null) {
+            addNewProduct(name, price, stockQuantity, promotion);
+            return;
+        }
+
+        updateStock(existingProduct, stockQuantity, promotion);
+    }
+
+    private Product findProductByName(String name) {
+        return products.stream()
+                .filter(product -> product.getName().equals(name))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private void addNewProduct(String name, Integer price, Integer stockQuantity, Promotion promotion) {
+        if (promotion != null) {
+            Stock stock = new Stock(stockQuantity, 0);
+            products.add(new Product(name, price, stock, promotion));
+            return;
+        }
+
+        Stock stock = new Stock(0, stockQuantity);
+        products.add(new Product(name, price, stock, promotion));
+    }
+
+    private void updateStock(Product product, int stockQuantity, Promotion promotion) {
+        Stock currentStock = product.getStock();
+
+        if (promotion != null) {
+            currentStock.setPromotionStock(stockQuantity);
+            return;
+        }
+
+        currentStock.setRegularStock(stockQuantity);
     }
 
     private int parseNumber(String number) {
