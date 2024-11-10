@@ -10,6 +10,10 @@ public class Stock {
         this.regularStock = regularStock;
     }
 
+    public int getFullStock() {
+        return regularStock + promotionStock;
+    }
+
     public int getRegularStock() {
         return regularStock;
     }
