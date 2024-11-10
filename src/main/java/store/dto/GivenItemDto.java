@@ -19,7 +19,8 @@ public record GivenItemDto(
         Product product = purchaseItem.getProduct();
 
         if (product.promotion() != null) {
-            return product.promotion().calculateFreeQuantity(product.stock().getPromotionStock());
+            return product.promotion()
+                    .calculateFreeQuantity(purchaseItem.getQuantity(), product.stock().getPromotionStock());
         }
 
         return 0;
