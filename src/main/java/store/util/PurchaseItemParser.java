@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import store.domain.Product;
 import store.domain.Products;
 import store.domain.PurchaseItem;
 import store.exception.ErrorMessage;
@@ -31,7 +32,6 @@ public class PurchaseItemParser {
 
     public List<PurchaseItem> parsePurchaseItems(String inputStatement, Products products) {
         clearStoredItems();
-
         validateInput(inputStatement);
 
         String[] purchaseParts = inputStatement.split(ITEM_SPLITTER);
@@ -54,7 +54,7 @@ public class PurchaseItemParser {
             validateItemName(name, products);
             itemNames.add(name);
 
-            purchaseItems.add(new PurchaseItem(name, quantity));
+            purchaseItems.add(new PurchaseItem(findMatchProduct(name, products), quantity));
         }
     }
 
@@ -67,6 +67,13 @@ public class PurchaseItemParser {
                 .validate(input -> input == null || input.isBlank(), ErrorMessage.INPUT_NOT_EMPTY)
                 .validate(input -> !input.matches(PURCHASE_ITEM_REGEX), ErrorMessage.INVALID_PURCHASE_FORMAT)
                 .get();
+    }
+
+    private Product findMatchProduct(String name, Products products) {
+        return products.getProducts().stream()
+                .filter(product -> product.getName().equals(name))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(ErrorMessage.PRODUCT_NOT_EXISTS.name()));
     }
 
     private void validateItemName(String name, Products products) {
