@@ -3,9 +3,9 @@ package store.service;
 import java.util.List;
 import store.domain.Product;
 import store.domain.Products;
-import store.domain.Promotion;
 import store.domain.PurchaseItem;
 import store.dto.GivenItemDto;
+import store.dto.PromotionDetailDto;
 import store.dto.PurchasedDto;
 import store.util.MembershipCalculator;
 import store.util.ProductLoader;
@@ -40,7 +40,7 @@ public class StoreService {
 
     public int calculateTotalPrice(List<PurchaseItem> purchaseItems) {
         return purchaseItems.stream()
-                .mapToInt(item -> item.getProduct().getPrice() * item.getQuantity())
+                .mapToInt(item -> item.getProduct().price() * item.getQuantity())
                 .sum();
     }
 
@@ -56,34 +56,62 @@ public class StoreService {
                 .toList();
     }
 
-    private PurchasedDto toPurchasedDto(PurchaseItem item) {
-        String productName = item.getProduct().getName();
-        int productPrice = item.getProduct().getPrice();
-        int totalPrice = productPrice * item.getQuantity();
-
-        return new PurchasedDto(productName, productPrice, totalPrice);
-    }
-
     public List<GivenItemDto> createGivenItems(List<PurchaseItem> purchaseItems) {
         return purchaseItems.stream()
                 .map(this::toGivenItemDto)
                 .toList();
     }
 
+    public void updateProductStock(List<PurchaseItem> purchaseItems) {
+        purchaseItems.forEach(this::updateEachStock);
+    }
+
+    public PromotionDetailDto getPromotionDetail(PurchaseItem purchaseItem) {
+        Product product = purchaseItem.getProduct();
+
+        if (product.promotion() != null) {
+            return product.promotion()
+                    .calculatePromotionAndFree(purchaseItem.getQuantity(), product.stock().getPromotionStock());
+        }
+
+        return new PromotionDetailDto(0, product.stock().getRegularStock());
+    }
+
+    private PurchasedDto toPurchasedDto(PurchaseItem item) {
+        String productName = item.getProduct().name();
+        int quantity = item.getQuantity();
+        int totalPrice = quantity * item.getProduct().price();
+
+        return new PurchasedDto(productName, quantity, totalPrice);
+    }
+
     private GivenItemDto toGivenItemDto(PurchaseItem purchaseItem) {
         Product product = purchaseItem.getProduct();
         int freeQuantity = calculateFreeQuantity(purchaseItem);
 
-        return new GivenItemDto(product.getName(), freeQuantity, product.getPrice());
+        return new GivenItemDto(product.name(), freeQuantity, product.price());
     }
 
     private int calculateFreeQuantity(PurchaseItem purchaseItem) {
-        Promotion promotion = purchaseItem.getProduct().getPromotion();
+        Product product = purchaseItem.getProduct();
 
-        if (promotion != null) {
-            return promotion.calculateFreeQuantity(purchaseItem.getQuantity());
+        if (product.promotion() != null) {
+            return product.promotion().calculateFreeQuantity(product.stock().getPromotionStock());
         }
 
         return 0;
+    }
+
+    private void updateEachStock(PurchaseItem purchaseItem) {
+        Product product = purchaseItem.getProduct();
+        int purchasedQuantity = purchaseItem.getQuantity();
+
+        PromotionDetailDto promotionDetailDto = getPromotionDetail(purchaseItem);
+
+        int promotionQuantity = Math.min(promotionDetailDto.promotionQuantity(), purchasedQuantity);
+        int regularQuantity = purchasedQuantity - promotionQuantity;
+
+        product.stock().updatePromotionStock(promotionQuantity);
+        product.stock().updateRegularStock(regularQuantity);
     }
 }
