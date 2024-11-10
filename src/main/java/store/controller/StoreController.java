@@ -37,20 +37,38 @@ public class StoreController {
     }
 
     private void processPromotions(List<PurchaseItem> purchaseItems) {
-        purchaseItems.stream()
-                .filter(PurchaseItem::needsAdditionalPurchase)
-                .forEach(this::handlePromotion);
+        purchaseItems.forEach(purchaseItem -> {
+            if (!purchaseItem.needsAdditionalPurchase()) {
+                Product product = purchaseItem.getProduct();
+
+                int shortageQuantity = product.calculateRegularQuantity(purchaseItem.getQuantity());
+                handleNoPromotion(product, shortageQuantity);
+                return;
+            }
+            handlePromotion(purchaseItem);
+        });
     }
 
     private void handlePromotion(PurchaseItem purchaseItem) {
-        if (isYes(askAdditionalPurchase(purchaseItem.product()))) {
+        if (isYes(askAdditionalPurchase(purchaseItem.getProduct()))) {
             purchaseItem.buyMore();
+        }
+    }
+
+    private void handleNoPromotion(Product product, int shortageQuantity) {
+        if (!isYes(askOkWithNoPromotion(product, shortageQuantity))) {
+            // 처음부터 재시작
         }
     }
 
     private String askAdditionalPurchase(Product product) {
         return getValidInput(() ->
                 view.askAdditionalPurchase(product));
+    }
+
+    private String askOkWithNoPromotion(Product product, int shortageQuantity) {
+        return getValidInput(() ->
+                view.askNoPromotion(product, shortageQuantity));
     }
 
     private boolean isYes(String yesOrNo) {
