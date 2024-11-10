@@ -42,6 +42,14 @@ public class InputView {
         return userInput;
     }
 
+    public String askPurchaseAgain() {
+        System.out.println(Statement.NEW_LINE.message + Statement.PURCHASE_AGAIN_STATEMENT.message);
+        String userInput = Console.readLine();
+
+        validateInput(userInput);
+        return userInput;
+    }
+
     private void validateInput(String userInput) {
         ValidatorBuilder.from(userInput)
                 .validate(input -> input == null || input.isBlank(), ErrorMessage.INPUT_NOT_EMPTY)
