@@ -21,16 +21,26 @@ public class OutputView {
     }
 
     private void printEachProduct(List<Product> products) {
-        products.stream()
-                .map(this::formatProduct)
-                .forEach(System.out::println);
+        products.forEach(this::printFormattedProduct);
         System.out.println();
     }
 
-    private String formatProduct(Product product) {
-        return String.format(Statement.PRODUCT_FORMAT.message, product.getName(), formatNumber(product.getPrice()))
-                + formatQuantity(product)
-                + formatPromotion(product);
+    private void printFormattedProduct(Product product) {
+        if (product.getPromotion() != null) {
+            System.out.println(
+                    formatProduct(product, product.getStock().getPromotionStock(), product.getPromotion().getName()));
+            System.out.println(formatProduct(product, product.getStock().getRegularStock(), Statement.BLANK.message));
+            return;
+        }
+
+        System.out.println(formatProduct(product, product.getStock().getRegularStock(), Statement.BLANK.message));
+    }
+
+    private String formatProduct(Product product, int stock, String promotion) {
+        return String.format(Statement.PRODUCT_FORMAT.message
+                , product.getName(), formatNumber(product.getPrice()))
+                + formatQuantity(stock)
+                + formatPromotion(promotion);
     }
 
     private String formatNumber(int number) {
@@ -38,17 +48,17 @@ public class OutputView {
         return decimalFormat.format(number);
     }
 
-    private String formatQuantity(Product product) {
-        if (product.getQuantity() > 0) {
-            return String.format(Statement.QUANTITY_FORMAT.message, formatNumber(product.getQuantity()));
+    private String formatQuantity(int quantity) {
+        if (quantity > 0) {
+            return String.format(Statement.QUANTITY_FORMAT.message, formatNumber(quantity));
         }
 
         return Statement.OUT_OF_STOCK.message;
     }
 
-    private String formatPromotion(Product product) {
-        if (product.getPromotion() != null) {
-            return product.getPromotion().getName();
+    private String formatPromotion(String promotionName) {
+        if (!promotionName.equals(Statement.BLANK.message)) {
+            return promotionName;
         }
 
         return Statement.BLANK.message;
