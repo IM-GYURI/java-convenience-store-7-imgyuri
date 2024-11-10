@@ -52,13 +52,13 @@ public class StoreService {
 
     public List<PurchasedDto> createPurchasedResults(List<PurchaseItem> purchaseItems) {
         return purchaseItems.stream()
-                .map(this::toPurchasedDto)
+                .map(PurchasedDto::from)
                 .toList();
     }
 
     public List<GivenItemDto> createGivenItems(List<PurchaseItem> purchaseItems) {
         return purchaseItems.stream()
-                .map(this::toGivenItemDto)
+                .map(GivenItemDto::from)
                 .toList();
     }
 
@@ -67,39 +67,7 @@ public class StoreService {
     }
 
     public PromotionDetailDto getPromotionDetail(PurchaseItem purchaseItem) {
-        Product product = purchaseItem.getProduct();
-
-        if (product.promotion() != null) {
-            return product.promotion()
-                    .calculatePromotionAndFree(purchaseItem.getQuantity(), product.stock().getPromotionStock());
-        }
-
-        return new PromotionDetailDto(0, product.stock().getRegularStock());
-    }
-
-    private PurchasedDto toPurchasedDto(PurchaseItem item) {
-        String productName = item.getProduct().name();
-        int quantity = item.getQuantity();
-        int totalPrice = quantity * item.getProduct().price();
-
-        return new PurchasedDto(productName, quantity, totalPrice);
-    }
-
-    private GivenItemDto toGivenItemDto(PurchaseItem purchaseItem) {
-        Product product = purchaseItem.getProduct();
-        int freeQuantity = calculateFreeQuantity(purchaseItem);
-
-        return new GivenItemDto(product.name(), freeQuantity, product.price());
-    }
-
-    private int calculateFreeQuantity(PurchaseItem purchaseItem) {
-        Product product = purchaseItem.getProduct();
-
-        if (product.promotion() != null) {
-            return product.promotion().calculateFreeQuantity(product.stock().getPromotionStock());
-        }
-
-        return 0;
+        return PromotionDetailDto.from(purchaseItem);
     }
 
     private void updateEachStock(PurchaseItem purchaseItem) {
