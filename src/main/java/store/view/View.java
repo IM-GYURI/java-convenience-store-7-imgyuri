@@ -45,4 +45,8 @@ public class View {
     public void printReceipt(ReceiptDto receiptDto) {
         outputView.printReceipt(receiptDto);
     }
+
+    public void printBlank() {
+        outputView.printBlank();
+    }
 }

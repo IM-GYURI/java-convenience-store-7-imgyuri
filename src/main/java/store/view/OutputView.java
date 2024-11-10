@@ -14,6 +14,10 @@ public class OutputView {
         System.out.println(errorMessage + Sentence.NEW_LINE.message);
     }
 
+    public void printBlank() {
+        System.out.println();
+    }
+
     public void printHello() {
         System.out.println(Sentence.HELLO_STATEMENT.message);
     }

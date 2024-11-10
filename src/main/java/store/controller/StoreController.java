@@ -90,6 +90,7 @@ public class StoreController {
 
     private void promptPurchaseAgain() {
         if (isYes(askPurchaseAgain())) {
+            view.printBlank();
             startPurchaseSession();
         }
     }
