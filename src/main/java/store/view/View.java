@@ -25,6 +25,10 @@ public class View {
         return inputView.askNoPromotion(product, shortageQuantity);
     }
 
+    public String askMembership() {
+        return inputView.askMembership();
+    }
+
     public void printHello() {
         outputView.printHello();
     }
