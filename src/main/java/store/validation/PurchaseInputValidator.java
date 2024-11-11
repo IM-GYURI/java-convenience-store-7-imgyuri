@@ -1,5 +1,6 @@
 package store.validation;
 
+import java.util.Objects;
 import java.util.Set;
 import store.domain.Product;
 import store.domain.Products;
@@ -21,6 +22,7 @@ public class PurchaseInputValidator {
     public static void validateStockAndDuplication(ParsedItemDto parsedItemDto, Set<String> itemNames,
                                                    Products products) {
         Product product = findMatchProduct(parsedItemDto.name(), products);
+        validateProductExists(product);
         validateStock(product, parsedItemDto.quantity());
         validateDuplication(parsedItemDto.name(), itemNames);
     }
@@ -36,7 +38,12 @@ public class PurchaseInputValidator {
         return products.products().stream()
                 .filter(product -> product.name().equals(name))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(ErrorMessage.PRODUCT_NOT_EXISTS.name()));
+                .orElse(null);
+    }
+
+    private static void validateProductExists(Product product) {
+        ValidatorBuilder.from(product)
+                .validate(Objects::isNull, ErrorMessage.PRODUCT_NOT_EXISTS);
     }
 
     private static void validateStock(Product product, int quantity) {
