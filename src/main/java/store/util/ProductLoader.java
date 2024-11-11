@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import store.domain.Product;
 import store.domain.Products;
@@ -20,61 +19,54 @@ public class ProductLoader {
     private static final int PROMOTION_INDEX = 3;
 
     private final Map<String, Promotion> promotions;
-    private final List<Product> products;
 
     public ProductLoader(Map<String, Promotion> promotions) {
         this.promotions = promotions;
-        this.products = new ArrayList<>();
     }
 
     public Products loadProducts(String filePath) {
+        Products products = new Products(new ArrayList<>());
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             br.readLine();
-            br.lines().forEach(this::processLine);
+            br.lines().forEach(line -> processLine(line, products));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        return new Products(products.stream().toList());
+        return products;
     }
 
-    private void processLine(String line) {
+    private void processLine(String line, Products products) {
         String[] parts = line.split(SPLITTER);
         String name = parts[NAME_INDEX];
         int price = parseNumber(parts[PRICE_INDEX]);
         int stockQuantity = parseNumber(parts[STOCK_INDEX]);
         Promotion promotion = parsePromotion(parts[PROMOTION_INDEX]);
 
-        updateOrAddProduct(name, price, stockQuantity, promotion);
+        updateOrAddProduct(name, price, stockQuantity, promotion, products);
     }
 
-    private void updateOrAddProduct(String name, int price, int stockQuantity, Promotion promotion) {
-        Product existingProduct = findProductByName(name);
+    private void updateOrAddProduct(String name, int price, int stockQuantity, Promotion promotion, Products products) {
+        Product existingProduct = products.findProductByName(name);
 
         if (existingProduct == null) {
-            addNewProduct(name, price, stockQuantity, promotion);
+            addNewProduct(name, price, stockQuantity, promotion, products);
             return;
         }
 
         updateStock(existingProduct, stockQuantity, promotion);
     }
 
-    private Product findProductByName(String name) {
-        return products.stream()
-                .filter(product -> product.name().equals(name))
-                .findFirst()
-                .orElse(null);
-    }
-
-    private void addNewProduct(String name, Integer price, Integer stockQuantity, Promotion promotion) {
+    private void addNewProduct(String name, Integer price, Integer stockQuantity, Promotion promotion,
+                               Products products) {
         if (promotion != null) {
             Stock stock = new Stock(stockQuantity, 0);
-            products.add(new Product(name, price, stock, promotion));
+            products.addProduct(new Product(name, price, stock, promotion));
             return;
         }
 
         Stock stock = new Stock(0, stockQuantity);
-        products.add(new Product(name, price, stock, promotion));
+        products.addProduct(new Product(name, price, stock, promotion));
     }
 
     private void updateStock(Product product, int stockQuantity, Promotion promotion) {
