@@ -1,9 +1,15 @@
 package store.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public record Products(
-        List<Product> products) {
+public class Products {
+    private List<Product> products;
+
+    public Products(
+            List<Product> products) {
+        this.products = new ArrayList<>(products);
+    }
 
     public Product findProductByName(String name) {
         return products.stream()
@@ -14,5 +20,9 @@ public record Products(
 
     public void addProduct(Product product) {
         products.add(product);
+    }
+
+    public List<Product> getProducts() {
+        return products.stream().toList();
     }
 }

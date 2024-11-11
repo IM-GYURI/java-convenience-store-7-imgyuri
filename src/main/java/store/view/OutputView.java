@@ -24,7 +24,7 @@ public class OutputView {
 
     public void printCurrentProducts(Products products) {
         System.out.println(Sentence.CURRENT_PRODUCTS_STATEMENT.message + Sentence.NEW_LINE.message);
-        printEachProduct(products.products());
+        printEachProduct(products.getProducts());
     }
 
     public void printReceipt(ReceiptDto receiptDto) {
