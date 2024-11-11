@@ -63,7 +63,7 @@ public class StoreService {
                 .toList();
     }
 
-    public void updateProductStock(List<PurchaseItem> purchaseItems) {
+    public synchronized void updateProductStock(List<PurchaseItem> purchaseItems) {
         purchaseItems.forEach(this::updateEachStock);
     }
 
