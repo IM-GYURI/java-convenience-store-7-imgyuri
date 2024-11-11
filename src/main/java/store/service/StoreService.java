@@ -10,7 +10,6 @@ import store.dto.PurchasedDto;
 import store.dto.ReceiptDto;
 import store.util.MembershipCalculator;
 import store.util.ProductLoader;
-import store.util.PromotionCalculator;
 import store.util.PurchaseItemProcessor;
 
 public class StoreService {
@@ -41,13 +40,14 @@ public class StoreService {
 
     public int calculateTotalPrice(List<PurchaseItem> purchaseItems) {
         return purchaseItems.stream()
-                .mapToInt(item -> item.getProduct().price() * item.getQuantity())
+                .mapToInt(item -> item.getProduct().calculateTotalPrice(item.getQuantity()))
                 .sum();
     }
 
     public int calculatePromotionDiscount(List<PurchaseItem> purchaseItems) {
         return purchaseItems.stream()
-                .mapToInt(PromotionCalculator::calculatePromotionDiscount)
+                .mapToInt(purchaseItem -> purchaseItem.getProduct()
+                        .calculatePromotionDiscount(purchaseItem.getQuantity()))
                 .sum();
     }
 
@@ -64,7 +64,11 @@ public class StoreService {
     }
 
     public synchronized void updateProductStock(List<PurchaseItem> purchaseItems) {
-        purchaseItems.forEach(this::updateEachStock);
+        purchaseItems.forEach(purchaseItem -> {
+            Product product = purchaseItem.getProduct();
+            int purchasedQuantity = purchaseItem.getQuantity();
+            product.updateStock(purchasedQuantity);
+        });
     }
 
     public PromotionDetailDto getPromotionDetail(PurchaseItem purchaseItem) {
@@ -82,17 +86,5 @@ public class StoreService {
         return new ReceiptDto(createPurchasedResults(purchaseItems)
                 , createGivenItems(purchaseItems), totalQuantity, totalPrice, promotionDiscount,
                 membershipDiscount, totalPrice - promotionDiscount - membershipDiscount);
-    }
-
-    private void updateEachStock(PurchaseItem purchaseItem) {
-        Product product = purchaseItem.getProduct();
-        int purchasedQuantity = purchaseItem.getQuantity();
-        int availablePromotionStock = product.stock().getPromotionStock();
-
-        int promotionQuantity = Math.min(availablePromotionStock, purchasedQuantity);
-        int regularQuantity = purchasedQuantity - promotionQuantity;
-
-        product.stock().updatePromotionStock(promotionQuantity);
-        product.stock().updateRegularStock(regularQuantity);
     }
 }
