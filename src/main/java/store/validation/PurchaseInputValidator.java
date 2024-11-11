@@ -47,7 +47,7 @@ public class PurchaseInputValidator {
     }
 
     private static void validateStock(Product product, int quantity) {
-        int fullStock = product.stock().getFullStock();
+        int fullStock = product.getFullStock();
         ValidatorBuilder.from(quantity)
                 .validate(value -> value > fullStock, ErrorMessage.STOCK_SHORTAGE);
     }
