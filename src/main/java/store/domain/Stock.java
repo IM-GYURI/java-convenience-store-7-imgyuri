@@ -10,10 +10,6 @@ public class Stock {
         this.regularStock = regularStock;
     }
 
-    public int getFullStock() {
-        return regularStock + promotionStock;
-    }
-
     public void updatePromotionStock(int quantity) {
         promotionStock -= quantity;
     }
