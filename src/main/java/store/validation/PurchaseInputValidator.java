@@ -35,7 +35,7 @@ public class PurchaseInputValidator {
     }
 
     private static Product findMatchProduct(String name, Products products) {
-        return products.products().stream()
+        return products.getProducts().stream()
                 .filter(product -> product.name().equals(name))
                 .findFirst()
                 .orElse(null);
