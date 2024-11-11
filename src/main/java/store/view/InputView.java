@@ -50,7 +50,7 @@ public class InputView {
         return userInput;
     }
 
-    private void validateInput(String userInput) {
+    void validateInput(String userInput) {
         ValidatorBuilder.from(userInput)
                 .validate(input -> input == null || input.isBlank(), ErrorMessage.INPUT_NOT_EMPTY)
                 .validate(input -> !input.equals(YES_ANSWER) && !input.equals(
