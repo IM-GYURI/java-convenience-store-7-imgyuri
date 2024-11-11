@@ -60,7 +60,7 @@ public class StoreController {
         });
     }
 
-    private void completeTransaction(List<PurchaseItem> purchaseItems) {
+    private synchronized void completeTransaction(List<PurchaseItem> purchaseItems) {
         ReceiptDto receiptDto = generateReceiptWithMembershipOption(purchaseItems);
         view.printReceipt(receiptDto);
         storeService.updateProductStock(purchaseItems);
