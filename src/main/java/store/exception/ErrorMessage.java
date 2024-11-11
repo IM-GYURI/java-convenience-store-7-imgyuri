@@ -8,7 +8,8 @@ public enum ErrorMessage {
     INVALID_QUANTITY("수량은 1 이상이어야 합니다."),
     STOCK_SHORTAGE("재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요."),
     PURCHASE_QUANTITY_NOT_INTEGER("구매 수량은 정수만 가능합니다."),
-    INVALID_YN_INPUT("입력값은 'Y' 또는 'N'이어야 합니다.");
+    INVALID_YN_INPUT("입력값은 'Y' 또는 'N'이어야 합니다."),
+    TOO_MANY_INVALID_INPUT("유효하지 않은 입력이 5회 반복되어 프로그램이 종료됩니다.");
 
     private static final String PREFIX = "[ERROR] ";
 
