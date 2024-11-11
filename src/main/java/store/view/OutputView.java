@@ -47,12 +47,12 @@ public class OutputView {
     private void printFormattedProduct(Product product) {
         if (product.promotion() != null) {
             System.out.println(formatProduct(product
-                    , product.stock().getPromotionStock(), product.promotion().getName()));
-            System.out.println(formatProduct(product, product.stock().getRegularStock(), Sentence.BLANK.message));
+                    , product.getPromotionStock(), product.promotion().getName()));
+            System.out.println(formatProduct(product, product.getRegularStock(), Sentence.BLANK.message));
             return;
         }
 
-        System.out.println(formatProduct(product, product.stock().getRegularStock(), Sentence.BLANK.message));
+        System.out.println(formatProduct(product, product.getRegularStock(), Sentence.BLANK.message));
     }
 
     private void printPurchases(List<PurchasedDto> purchasedItems) {
