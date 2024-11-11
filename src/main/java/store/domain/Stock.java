@@ -10,11 +10,11 @@ public class Stock {
         this.regularStock = regularStock;
     }
 
-    public void updatePromotionStock(int quantity) {
+    public void minusPromotionStock(int quantity) {
         promotionStock -= quantity;
     }
 
-    public void updateRegularStock(int quantity) {
+    public void minusRegularStock(int quantity) {
         regularStock -= quantity;
     }
 

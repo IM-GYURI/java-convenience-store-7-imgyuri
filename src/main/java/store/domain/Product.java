@@ -15,8 +15,8 @@ public record Product(
         int promotionQuantity = Math.min(availablePromotionStock, purchasedQuantity);
         int regularQuantity = purchasedQuantity - promotionQuantity;
 
-        stock.updatePromotionStock(promotionQuantity);
-        stock.updateRegularStock(regularQuantity);
+        stock.minusPromotionStock(promotionQuantity);
+        stock.minusRegularStock(regularQuantity);
     }
 
     public int calculatePromotionDiscount(int purchasedQuantity) {
